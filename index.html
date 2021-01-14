@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-	<meta name="viewport" content= "width=device-width, initial-scale=1.0" http-equiv="content-type" content="text/html" charset="UTF-8" />
+	<meta name="viewport" content= "width=device-width" http-equiv="content-type" content="text/html" charset="UTF-8" />
    
    <!--OL6-->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
@@ -31,7 +31,7 @@
 	<!--OL6-->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
 	
-	<!--TR3-->
+	<!--TR3 ../TR3-min/TR3.debug.js https://terre3.es/API/TR3.js-->
 	<script type="text/javascript" src="https://terre3.es/API/TR3.js"></script>
 	
 	<!--proj4-->
@@ -69,40 +69,56 @@
 		
 		TR3.setLoader( 'TR3-min/' );
 		document.getElementById('tools').innerHTML = TR3.setPanel();
-		//TR3.setOptions(false/*imgControl*/, false/*cursor*/, false/*anaglyph*/, false/*autoRotate*/, false/*wireframeMesh*/);
+		TR3.setOpts({imgControl: false});
 		
 		$( "#tools" ).dialog({position: { my: "right top", at: "right top", of: window },width: 215});
 		var timer1;
 
-function setTR3() {
-	
-	clearTimeout(timer1);
-	function setTR3fn() {
+	function setTR3() {
 		var bbox = map.getView().calculateExtent(map.getSize());
 		var code = map.getView().getProjection().getCode();
-
-			
+	
 		var desty = document.getElementById('TR3');
 		var oriAux = document.getElementsByTagName('CANVAS');
 		var ori = oriAux[0];
-			
-		/*var oriCtx = ori.getContext("2d");
-		//draw a red box
-		oriCtx.fillStyle="#FF0000";
-		oriCtx.fillRect(100,100,300,300);
-		var img = new Image;
-		img.src = ori.toDataURL();*/
 		
-		TR3.setStart(ori, desty, bbox, code);
-
-		TR3.loadFile( "TR3-min/obj3d/hey.glb"/*src*/, [439700, 4439700, false]/*coords*/, true/*animation*/, [1,1,1.5]/*scale*/, true/*rotate*/, false/*transformControls*/);
-		TR3.loadFile( "TR3-min/obj3d/hey.glb", [440300, 4440300, 700], true, [2,2,2], -Math.PI/6, false);
-	}
+		var TR3pms = {	ori: ori, 
+						desty: desty, 
+						bbox: bbox, 
+						projCode: code,
+						lookAtini: [100,4]};
+		
+		TR3.setStart( TR3pms );
+		
+		var OBJ1pms = { src: "TR3-min/obj3d/runner.glb",
+						pos: [440250, 4439779, false],
+						animation: true,
+						scale: [50,50,50],
+						slctItem: true};
 	
-	timer1 = setTimeout(function() { setTR3fn(); }, 1000);
-}
+		TR3.loadFile( OBJ1pms ).then(function(obj, shadow) { 
+			TR3.scene.add( obj );
+			TR3.scene.add( shadow );
+			TR3.transCtrlsEnabled( true );
+			TR3.transformControls.attach( obj );
+		});
+		
+		TR3.map.addEventListener("TR3-onIntersectEvClick", 
+			function(req) { 
+				console.log(req);
+			}
+		);
+		
+		TR3.map.addEventListener("TR3-onIntersectEvOver", 
+			function(req) { 
+				console.log(req);
+			}
+		);
+	}
 
-map.on('moveend', setTR3);
+setTimeout(function () {
+	map.on('moveend', setTR3);
+}, 500);
 
 // https://openlayers.org/en/latest/examples/tile-load-events.html
 /**
