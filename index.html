@@ -36,7 +36,6 @@
 	
 	<!--proj4-->
 	<script type="text/javascript" src="proj4js/proj4.js"></script>
-	<script type="text/javascript" src="proj4js/25830.js"></script>
 	
     <title>Insert 3D object GLB example</title>
   </head>
@@ -47,10 +46,6 @@
 	<div id="progress" style="display:none" ></div>
 	<div>Modelo3D by <a href="https://skfb.ly/6WyoS" target="_blank">sketchfab</a></div>
     <script type="text/javascript">
-		ol.proj.proj4.register(proj4);//ol v5.0.0
-		var projection = ol.proj.get("EPSG:25830");
-		projection.setExtent([ -1500000, 3000000, 2000000, 5000000]);
-		
 		var osmLayer =  new ol.layer.Tile({
 			source: new ol.source.OSM({crossOrigin: 'anonymous'})
 		})
@@ -60,10 +55,8 @@
 				osmLayer
 			],
 			view: new ol.View({
-				center: [440000, 4440000],
-				//maxZomm: 12,
-				zoom: 13,
-				projection: projection
+				center: [-411990, 4933238],
+				zoom: 16
 			})
 		});
 		
@@ -91,7 +84,7 @@
 		TR3.setStart( TR3pms );
 		
 		var OBJ1pms = { src: "TR3-min/obj3d/runner.glb",
-						pos: [440250, 4439779, false],
+						pos: [-411990, 4933238, false],
 						animation: true,
 						scale: [50,50,50],
 						slctItem: true};
